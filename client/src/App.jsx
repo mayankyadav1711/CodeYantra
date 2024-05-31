@@ -249,8 +249,7 @@ function App() {
           >
             <div className="flex items-center justify-between mb-4">
             <div className="flex flex-row"> 
-            <span className="text-xl font-medium">File Explorer</span>
-              <span  className="mt-1 ml-2"> 
+            <span  className="mt-1 mr-2"> 
               <svg
                     className="w-5 h-5 "
                     fill="white"
@@ -262,7 +261,9 @@ function App() {
                   >
                     <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z"></path>
                   </svg>
-                  </span></div>
+                  </span>
+            <span className="text-xl font-medium mt-[1px]">File Explorer</span>
+              </div>
              
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
