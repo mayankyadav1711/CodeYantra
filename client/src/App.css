@@ -1,27 +1,30 @@
-.playground-container {
-  display: flex;
-  flex-direction: column;
+@import url('https://fonts.googleapis.com/css2?family=Anta&family=Cinzel&family=Handjet:wght@200&family=Satisfy&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap');
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-.editor-container {
-  min-height: 60vh;
-  display: flex;
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.files {
-  padding: 20px;
-  width: 10vw;
+.ace-github .ace_marker-layer .ace_active-line {
+  background: #ffffff17 !important;
+  padding: 8px;
+  border-radius: 2px;
 }
 
-.editor {
-  width: 90vw;
+.ace_selection {
+  background-color: #666666d8 !important;
+  color: white !important;
 }
 
-.file-node {
-  cursor: pointer;
+*{
+  font-family: "Anta", sans-serif;
+
+}
+.anta-regular {
+  font-family: "Anta", sans-serif;
+ 
 }
 
-li {
-  list-style: none;
-  line-height: 24px;
-}

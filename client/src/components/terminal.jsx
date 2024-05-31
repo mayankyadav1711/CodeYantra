@@ -1,3 +1,4 @@
+// Terminal.jsx
 import { Terminal as XTerminal } from "@xterm/xterm";
 import { useEffect, useRef } from "react";
 import socket from "../socket";
@@ -29,7 +30,13 @@ const Terminal = () => {
     socket.on("terminal:data", onTerminalData);
   }, []);
 
-  return <div ref={terminalRef} id="terminal" />;
+  return (
+    <div
+      ref={terminalRef}
+      id="terminal"
+      className="bg-white rounded p-2 text-sm font-mono w-full"
+    />
+  );
 };
 
 export default Terminal;

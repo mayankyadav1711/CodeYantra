@@ -5,14 +5,16 @@ const { Server: SocketServer } = require('socket.io')
 const path = require('path')
 const cors = require('cors')
 const chokidar = require('chokidar');
-
+var os = require('os');
 const pty = require('node-pty')
 
-const ptyProcess = pty.spawn('bash', [], {
+var shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+const cwd = path.resolve(__dirname, 'user');
+var ptyProcess = pty.spawn(shell, [], {
     name: 'xterm-color',
     cols: 80,
     rows: 30,
-    cwd: process.env.INIT_CWD + '/user',
+    cwd: cwd,
     env: process.env
 });
 
