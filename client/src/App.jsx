@@ -7,7 +7,7 @@ import FileTree from "./components/tree";
 import Terminal from "./components/terminal";
 import socket from "./socket";
 import ace from "ace-builds";
-import "./App.css"
+import "./App.css";
 function App() {
   const [fileTree, setFileTree] = useState({});
   const [selectedFile, setSelectedFile] = useState("");
@@ -20,8 +20,8 @@ function App() {
   const [selection, setSelection] = useState(null);
   const [editorTheme, setEditorTheme] = useState("github");
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-  const [isSaved, setIsSaved] = useState(true);
- 
+  const [isCopied, setIsCopied] = useState(false); // State to track copied status
+  const isSaved = selectedFileContent === code;
   const getFileTree = async () => {
     const response = await fetch("http://localhost:9000/files");
     const result = await response.json();
@@ -57,26 +57,6 @@ function App() {
     setSelectedLanguage(language);
   };
 
-  const handleFileDrop = (event) => {
-    event.preventDefault();
-    const files = event.dataTransfer.files;
-    // Handle dropped files
-  };
-
-  useEffect(() => {
-    const handleDragOver = (event) => {
-      event.preventDefault();
-    };
-
-    document.addEventListener("dragover", handleDragOver);
-    document.addEventListener("drop", handleFileDrop);
-
-    return () => {
-      document.removeEventListener("dragover", handleDragOver);
-      document.removeEventListener("drop", handleFileDrop);
-    };
-  }, []);
-
   useEffect(() => {
     getFileTree();
   }, []);
@@ -88,13 +68,12 @@ function App() {
           path: selectedFile,
           content: code,
         });
-      }, 1000);
+      }, 5*1000);
       return () => {
         clearTimeout(timer);
       };
     }
   }, [code, selectedFile, isSaved]);
-
   useEffect(() => {
     setCode(selectedFileContent);
   }, [selectedFileContent]);
@@ -118,6 +97,7 @@ function App() {
     setSelectedFileContent("");
     setCode("");
     setIsSaved(true);
+    setIsCopied(false);
   };
 
   const handleCloseFile = (path) => {
@@ -127,6 +107,7 @@ function App() {
       setSelectedFileContent("");
       setCode("");
       setIsSaved(true);
+      setIsCopied(false);
     }
   };
 
@@ -141,18 +122,11 @@ function App() {
     }
   }, [searchTerm, fileTree]);
 
-  useEffect(() => {
-    const autoSave = setInterval(() => {
-      if (!isSaved && code) {
-        socket.emit("file:change", {
-          path: selectedFile,
-          content: code,
-        });
-      }
-    }, 3000); // Auto-save every 30 seconds
-
-    return () => clearInterval(autoSave);
-  }, [code, selectedFile, isSaved]);
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(code); // Copy code to clipboard
+    setIsCopied(true); // Set copied state to true
+    setTimeout(() => setIsCopied(false), 5000); // Reset isCopied state after 5 seconds
+  };
 
   return (
     <div className="flex h-screen bg-neutral-900 font-sans no-scrollbar ">
@@ -165,20 +139,37 @@ function App() {
               alt="Codeic Logo"
               className="w-12 h-12 mr-2 mb-1"
             />
-            <span className="text-2xl font-semibold  anta-regular">CodeYantra &nbsp; &nbsp;&nbsp;</span>
+            <span className="text-2xl font-semibold  anta-regular">
+              CodeYantra &nbsp; &nbsp;&nbsp;
+            </span>
             <ul className="flex space-x-4">
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md  ">File</li>
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">Edit</li>
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">View</li>
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">Navigate</li>
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">Editor</li>
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">Help</li>
+              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md  ">
+                File
+              </li>
+              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
+                Edit
+              </li>
+              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
+                View
+              </li>
+              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
+                Navigate
+              </li>
+              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
+                Editor
+              </li>
+              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
+                Help
+              </li>
             </ul>
           </div>
 
           <div className="flex items-center space-x-4">
-            <button className="bg-[#ffffff17] text-white px-3 py-2 rounded-md focus:outline-none">
-              New File
+            <button
+              onClick={handleCopyCode}
+              className="bg-[#ffffff17] text-white px-3 py-2 rounded-md focus:outline-none"
+            >
+              {isCopied ? "Copied" : "Copy Code"}
             </button>
             <button
               className={`text-white px-3 py-2 rounded-md focus:outline-none ${
@@ -191,7 +182,8 @@ function App() {
               <input
                 type="text"
                 placeholder="Search"
-                className="bg-[#ffffff17] text-white px-3 py-2 pr-10 rounded-md focus:outline-none" value={searchTerm}
+                className="bg-[#ffffff17] text-white px-3 py-2 pr-10 rounded-md focus:outline-none"
+                value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <button
@@ -200,23 +192,20 @@ function App() {
               >
                 {/* Search Icon */}
                 <svg
-  xmlns="http://www.w3.org/2000/svg"
-  className="h-6 w-6"
-  fill="none"
-  viewBox="0 0 24 24"
-  stroke="currentColor"
->
-  <circle cx="10" cy="10" r="7" />
-  <path
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    strokeWidth="2"
-    d="M15 15l5 5"
-  />
-</svg>
-
-
-
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <circle cx="10" cy="10" r="7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 15l5 5"
+                  />
+                </svg>
               </button>
             </div>
           </div>
@@ -230,7 +219,7 @@ function App() {
             {searchResults.map((result) => (
               <li
                 key={result}
-                onClick={() => handleFileSelect(result)}
+                onClick={() => handleFileSelect(`\\${result}`)}
                 className="cursor-pointer hover:text-gray-400  ml-4"
               >
                 {result}
@@ -294,18 +283,15 @@ function App() {
                   >
                     <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z"></path>
                   </svg>
-                  <span
-                    onClick={() => handleFileSelect(file)}
-                    className="mr-2"
-                  >
+                  <span onClick={() => handleFileSelect(file)} className="mr-2">
                     {file.split("/").pop()}
                   </span>
                   <button
                     onClick={() => handleCloseFile(file)}
-                    className="text-gray-400 hover:text-gray-200 focus:outline-none"
+                    className="text-red-400 hover:text-red-600 focus:outline-none"
                   >
                     <svg
-                      className="w-4 h-4"
+                      className="w-5 h-5"
                       fill="none"
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -340,9 +326,7 @@ function App() {
                   backgroundColor: "#1f1f1f",
                   color: "#d4d4d4",
                   fontFamily: "Cascadia Code, monospace",
-                  
                 }}
-             
                 theme={editorTheme}
               />
             </div>
