@@ -22,6 +22,8 @@ function App() {
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [isCopied, setIsCopied] = useState(false); // State to track copied status
   const isSaved = selectedFileContent === code;
+  const [codingTime, setCodingTime] = useState(0);
+
   const getFileTree = async () => {
     const response = await fetch("http://localhost:9000/files");
     const result = await response.json();
@@ -49,13 +51,7 @@ function App() {
     }
   };
 
-  const switchEditorTheme = (theme) => {
-    setEditorTheme(theme);
-  };
-
-  const changeLanguage = (language) => {
-    setSelectedLanguage(language);
-  };
+  
 
   useEffect(() => {
     getFileTree();
@@ -126,6 +122,22 @@ function App() {
     navigator.clipboard.writeText(code); // Copy code to clipboard
     setIsCopied(true); // Set copied state to true
     setTimeout(() => setIsCopied(false), 5000); // Reset isCopied state after 5 seconds
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCodingTime((prevTime) => prevTime + 1);
+    }, 1000); // Update every second
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format time as hours, minutes, and seconds
+  const formatTime = (timeInSeconds) => {
+    const hours = Math.floor(timeInSeconds / 3600);
+    const minutes = Math.floor((timeInSeconds % 3600) / 60);
+    const seconds = timeInSeconds % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -236,7 +248,22 @@ function App() {
             } lg:block bg-neutral-900 text-white p-4 overflow-y-auto overflow-x-hidden w-72 border-r border-white transition-all duration-300 ease-in-out`}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-medium">File Explorer</h2>
+            <div className="flex flex-row"> 
+            <span className="text-xl font-medium">File Explorer</span>
+              <span  className="mt-1 ml-2"> 
+              <svg
+                    className="w-5 h-5 "
+                    fill="white"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z"></path>
+                  </svg>
+                  </span></div>
+             
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className="lg:hidden text-gray-400 hover:text-white focus:outline-none"
@@ -333,6 +360,8 @@ function App() {
             {/* Status Bar */}
             <div className="bg-neutral-800 text-gray-400 p-2 flex justify-between">
               <span>Ln 1, Col 1</span>
+              <span>{formatTime(codingTime)}</span>
+
               <span>UTF-8</span>
               <span>JavaScript</span>
             </div>
