@@ -1,4 +1,4 @@
-<figure><img src=".gitbook/assets/creenshot 2024-06-01 153514.png" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/Screenshot 2024-06-01 153514.png" alt=""><figcaption></figcaption></figure>
 
 # CodeYantra - Web IDE
 
