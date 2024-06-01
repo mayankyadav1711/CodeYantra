@@ -1,21 +1,4 @@
----
-cover: .gitbook/assets/Screenshot 2024-06-01 153514.png
-coverY: 0
-layout:
-  cover:
-    visible: true
-    size: hero
-  title:
-    visible: true
-  description:
-    visible: true
-  tableOfContents:
-    visible: true
-  outline:
-    visible: true
-  pagination:
-    visible: true
----
+<figure><img src=".gitbook/assets/creenshot 2024-06-01 153514.png" alt=""><figcaption></figcaption></figure>
 
 # CodeYantra - Web IDE
 
