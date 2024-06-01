@@ -8,7 +8,7 @@ const CodeExplainer = ({ code, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const genAI = new GoogleGenerativeAI("AIzaSyB2lUD9N9ntifB_QGxUOelgUj73KYHQBbg");
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
     const generateExplanation = async () => {
       setIsLoading(true);

@@ -8,7 +8,7 @@ const DebugCode = ({ code, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const genAI = new GoogleGenerativeAI("GEMINI_API_KEY");
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
     const generateExplanation = async () => {
       setIsLoading(true);
@@ -33,7 +33,7 @@ const DebugCode = ({ code, onClose }) => {
   const handlePromptSubmit = async (prompt) => {
     setIsLoading(true);
     try {
-      const genAI = new GoogleGenerativeAI("AIzaSyB2lUD9N9ntifB_QGxUOelgUj73KYHQBbg");
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const result = await model.generateContent([prompt]);
       const response = await result.response;
