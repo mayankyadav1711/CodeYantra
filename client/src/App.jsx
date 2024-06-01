@@ -5,6 +5,13 @@ import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
 import FileTree from "./components/tree";
 import Terminal from "./components/terminal";
+import CodeExplainer from "./components/CodeExplainer";
+import DebugCode from "./components/DebugCode";
+import LoadingAnimation from "./components/LoadingAnimation";
+import Modal from "react-modal"; // Importing react-modal
+import CodeGenerator from "./components/CodeGenerator";
+Modal.setAppElement("#root");
+
 import socket from "./socket";
 import ace from "ace-builds";
 import "./App.css";
@@ -20,10 +27,21 @@ function App() {
   const [selection, setSelection] = useState(null);
   const [editorTheme, setEditorTheme] = useState("github");
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-  const [isCopied, setIsCopied] = useState(false); // State to track copied status
+  const [isCopied, setIsCopied] = useState(false);
   const isSaved = selectedFileContent === code;
   const [codingTime, setCodingTime] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDebugModalOpen, setIsDebugModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    // Simulate a delay to show the loading animation
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 10000); // Change the delay duration as needed
+
+    return () => clearTimeout(timer);
+  }, []);
   const getFileTree = async () => {
     const response = await fetch("http://localhost:9000/files");
     const result = await response.json();
@@ -51,8 +69,6 @@ function App() {
     }
   };
 
-  
-
   useEffect(() => {
     getFileTree();
   }, []);
@@ -64,7 +80,7 @@ function App() {
           path: selectedFile,
           content: code,
         });
-      }, 5*1000);
+      }, 5 * 1000);
       return () => {
         clearTimeout(timer);
       };
@@ -137,11 +153,32 @@ function App() {
     const hours = Math.floor(timeInSeconds / 3600);
     const minutes = Math.floor((timeInSeconds % 3600) / 60);
     const seconds = timeInSeconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+  const handleDebugOpenModal = () => {
+    setIsDebugModalOpen(true);
+  };
+
+  const handleDebugCloseModal = () => {
+    setIsDebugModalOpen(false);
+  };
+  const handleCodeGenerated = (generatedCode) => {
+    setCode(generatedCode);
+  };
   return (
-    <div className="flex h-screen bg-neutral-900 font-sans no-scrollbar ">
+    <div className="flex h-screen bg-neutral-900 font-sans no-scrollbar">
+      <LoadingAnimation isLoading={isLoading} />
+
       <div className="flex flex-col bg-neutral-800 text-white w-full">
         {/* Top Navigation Bar */}
         <nav className="flex items-center justify-between bg-neutral-800 text-white p-4">
@@ -151,10 +188,10 @@ function App() {
               alt="Codeic Logo"
               className="w-12 h-12 mr-2 mb-1"
             />
-            <span className="text-2xl font-semibold  anta-regular">
-              CodeYantra &nbsp; &nbsp;&nbsp;
+            <span className="text-3xl font-bold bg-gradient-to-r from-yellow-500 to-pink-500 text-transparent bg-clip-text ">
+              CodeYantra
             </span>
-            <ul className="flex space-x-4">
+            {/* <ul className="flex space-x-4">
               <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md  ">
                 File
               </li>
@@ -164,23 +201,42 @@ function App() {
               <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
                 View
               </li>
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
-                Navigate
-              </li>
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
-                Editor
-              </li>
-              <li className="hover:bg-[#ffffff17] cursor-pointer px-3 py-2 rounded-md text-lg font-md">
-                Help
-              </li>
-            </ul>
+            
+             
+            </ul> */}
           </div>
 
           <div className="flex items-center space-x-4">
+            <CodeGenerator onCodeGenerated={handleCodeGenerated} />
+            <button id="bottone1" onClick={handleDebugOpenModal}>
+              <strong>Debug Code</strong>
+            </button>
+
+            <button
+              onClick={handleOpenModal}
+              className="hover:brightness-110 hover:animate-pulse font-medium px-3 py-2 rounded-md bg-gradient-to-r from-blue-500 to-pink-500 text-white"
+            >
+              Explain Code
+            </button>
+
             <button
               onClick={handleCopyCode}
-              className="bg-[#ffffff17] text-white px-3 py-2 rounded-md focus:outline-none"
+              className="bg-[#ffffff17] text-white px-3 py-2 rounded-md focus:outline-none flex items-center"
             >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                ></path>
+              </svg>
               {isCopied ? "Copied" : "Copy Code"}
             </button>
             <button
@@ -248,23 +304,28 @@ function App() {
             } lg:block bg-neutral-900 text-white p-4 overflow-y-auto overflow-x-hidden w-72 border-r border-white transition-all duration-300 ease-in-out`}
           >
             <div className="flex items-center justify-between mb-4">
-            <div className="flex flex-row"> 
-            <span  className="mt-1 mr-2"> 
-              <svg
-                    className="w-5 h-5 "
-                    fill="white"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
+              <div className="flex flex-row">
+                <span className="mt-1 mr-2">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
                     stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z"></path>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                    ></path>
                   </svg>
-                  </span>
-            <span className="text-xl font-medium mt-[1px]">File Explorer</span>
+                </span>
+                <span className="text-xl font-medium mt-[1px]">
+                  File Explorer
+                </span>
               </div>
-             
+
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 className="lg:hidden text-gray-400 hover:text-white focus:outline-none"
@@ -340,6 +401,7 @@ function App() {
                   {selectedFile.replaceAll("/", " > ")}
                 </p>
               )}
+
               <AceEditor
                 width="100%"
                 mode={selectedLanguage}
@@ -374,6 +436,29 @@ function App() {
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={handleCloseModal}
+        className="modal"
+        overlayClassName="modal-overlay"
+      >
+        <button className="close-button" onClick={handleCloseModal}>
+          Close
+        </button>
+        <CodeExplainer code={code} onClose={handleCloseModal} />
+      </Modal>
+      <Modal
+        isOpen={isDebugModalOpen}
+        onRequestClose={handleDebugCloseModal}
+        className="modal"
+        overlayClassName="modal-overlay"
+      >
+        <button className="close-button" onClick={handleDebugCloseModal}>
+          Close
+        </button>
+        <DebugCode code={code} onClose={handleDebugCloseModal} />
+      </Modal>
     </div>
   );
 }

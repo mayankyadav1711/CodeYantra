@@ -10,10 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.12.0",
     "@xterm/xterm": "^5.5.0",
+    "dotenv": "^16.4.5",
+    "env-cmd": "^10.1.0",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
     "react": "^18.2.0",
     "react-ace": "^11.0.1",
     "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
+    "react-modal": "^3.16.1",
     "socket.io-client": "^4.7.5"
   },
   "devDependencies": {

@@ -27,4 +27,127 @@
   font-family: "Anta", sans-serif;
  
 }
+/* .modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000; /* Ensure modal is above other content */
 
+
+/* .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+ /* Ensure overlay is below modal */
+
+/* .code-explainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.explanation-content {
+  margin-top: 20px;
+}
+
+.explanation-content h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Style for bullet points */
+/* .explanation-content ul {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.explanation-content ul li {
+  margin-bottom: 10px;
+}  */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.spinner {
+  width: 3em;
+  height: 3em;
+  cursor: not-allowed;
+  border-radius: 50%;
+  border: 2px solid #444;
+  box-shadow: -10px -10px 10px #6359f8, 0px -10px 10px 0px #9c32e2, 10px -10px 10px #f36896, 10px 0 10px #ff0b0b, 10px 10px 10px 0px#ff5500, 0 10px 10px 0px #ff9500, -10px 10px 10px 0px #ffb700;
+  animation: rot55 0.7s linear infinite;
+}
+
+.spinnerin {
+  border: 2px solid #444;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes rot55 {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+#bottone1 {
+ padding-left: 12px;
+ padding-right: 12px;
+ padding-top: 8px;
+ padding-bottom:8px;
+  border-radius: 9px;
+  background: #d5f365;
+  border: none;
+  font-family: inherit;
+  text-align: center;
+  color:black;
+  cursor: pointer;
+  transition: 0.4s;
+ }
+ 
+ #bottone1:hover {
+  box-shadow: 7px 5px 56px -14px #C3D900;
+ }
+ 
+ #bottone1:active {
+  transform: scale(0.97);
+  box-shadow: 7px 5px 56px -10px #C3D900;
+ }
